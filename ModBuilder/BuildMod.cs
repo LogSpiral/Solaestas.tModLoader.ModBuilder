@@ -56,6 +56,7 @@ public class BuildMod : Microsoft.Build.Utilities.Task
 		// Add dll and pdb
 		var dllref = new HashSet<string>(property.DllReferences);
 		var modref = new HashSet<string>(property.ModReferences.Select(mod => mod.Mod));
+		var weakref = new HashSet<string>(property.WeakReferences.Select(mod => mod.Mod));
 
 		// Add dll and pdb
 		tmod.AddFile($"{ModName}.dll", ModAssembly.ItemSpec);
@@ -66,7 +67,7 @@ public class BuildMod : Microsoft.Build.Utilities.Task
 		foreach (var lib in ModReference)
 		{
 			var filename = lib.GetMetadata("Filename");
-			if (modref.Contains(filename))
+			if (modref.Contains(filename) || weakref.Contains(filename))
 			{
 				continue;
 			}

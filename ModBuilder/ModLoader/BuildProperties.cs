@@ -35,6 +35,10 @@ public class BuildProperties
 
 	public bool PlayableOnPreview = true;
 
+	public bool translationMod;
+
+	public string modSource = string.Empty;
+
 	public ModSide Side;
 
 	// this mod will load after any mods in this list sortAfter includes (mod|weak)References that
@@ -59,7 +63,7 @@ public class BuildProperties
 		}
 
 		properties.BuildVersion = info.tMLVersion;
-
+		properties.modSource = modDir.TrimEnd('\\');
 		if (File.Exists(descriptionfile))
 		{
 			properties.Description = File.ReadAllText(descriptionfile);
@@ -125,7 +129,9 @@ public class BuildProperties
 				case "playableOnPreview":
 					properties.PlayableOnPreview = string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
 					break;
-
+				case "translationMod":
+					properties.translationMod = string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
+					break;
 				case "hideCode":
 					properties.HideCode = string.Equals(value, "true", StringComparison.OrdinalIgnoreCase);
 					break;
@@ -252,7 +258,10 @@ public class BuildProperties
 				{
 					writer.Write("!playableOnPreview");
 				}
-
+				if (translationMod)
+				{
+					writer.Write("translationMod");
+				}
 				if (!HideCode)
 				{
 					writer.Write("!hideCode");
@@ -279,7 +288,12 @@ public class BuildProperties
 					writer.Write("side");
 					writer.Write((byte)Side);
 				}
-
+				if (modSource.Length > 0)
+				{
+					writer.Write("modSource");
+					writer.Write(modSource);
+					
+				}
 				writer.Write("buildVersion");
 				writer.Write(BuildVersion.ToString());
 
